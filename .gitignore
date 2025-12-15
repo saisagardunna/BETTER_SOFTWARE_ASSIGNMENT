@@ -81,6 +81,7 @@ terraform/*.tfvars
 # mypy cache
 *.mypy_cache
 
-# environment file
-# environment file
-# .env
+# environment files
+.env
+*.env
+!.env.example

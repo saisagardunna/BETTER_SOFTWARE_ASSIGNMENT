@@ -36,12 +36,19 @@ The server should start and show:
 
 If you see any errors related to the chatbot module, they should now be fixed!
 
-### Environment Variable
+### Environment Variables
 
-Make sure your MongoDB connection is set:
-```powershell
-$env:MONGODB_URI='mongodb+srv://saidunna450:Saisagar%40123@cluster0.ww2edzo.mongodb.net/?retryWrites=true&w=majority'
+Make sure you have created a `.env` file in `src/apps/backend/` with your MongoDB connection string:
+```bash
+# Copy the example file and add your credentials
+cp src/apps/backend/.env.example src/apps/backend/.env
+
+# Then edit .env and add your actual credentials:
+# MONGODB_URI="your_mongodb_connection_string"
+# GROQ_API_KEY="your_groq_api_key"
 ```
+
+**Note:** The `.env` file is gitignored to keep your credentials secure. Never commit credentials to the repository!
 
 ### Test the Backend
 
