@@ -1,8 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAccountContext } from 'frontend/contexts/account.provider';
 import TaskService from 'frontend/services/task.service';
 import { Task } from 'frontend/types/task';
 import CommentSection from 'frontend/components/comment-section';
+
+// Add animation styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+if (!document.head.querySelector('style[data-dashboard-animations]')) {
+    styleSheet.setAttribute('data-dashboard-animations', 'true');
+    document.head.appendChild(styleSheet);
+}
 
 // Styles objects
 const styles = {
@@ -132,6 +152,7 @@ const TaskList: React.FC = () => {
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+    const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
 
     const taskService = new TaskService();
 
@@ -165,6 +186,7 @@ const TaskList: React.FC = () => {
     const handleCreateTask = async () => {
         if (!accountDetails?.id || !newTaskTitle || !newTaskDescription) return;
 
+        const loadingToast = toast.loading('Creating task...');
         try {
             await taskService.createTask(accountDetails.id, {
                 title: newTaskTitle,
@@ -174,8 +196,10 @@ const TaskList: React.FC = () => {
             setNewTaskDescription('');
             setIsCreating(false);
             await fetchTasks();
+            toast.success('✅ Task created successfully!', { id: loadingToast });
         } catch (e) {
             console.error(e);
+            toast.error('❌ Failed to create task. Please try again.', { id: loadingToast });
         }
     };
 
@@ -183,17 +207,24 @@ const TaskList: React.FC = () => {
         if (!accountDetails?.id) return;
         if (!window.confirm('Are you sure you want to delete this task?')) return;
 
+        setDeletingTaskId(taskId);
+        const loadingToast = toast.loading('Deleting task...');
         try {
             await taskService.deleteTask(accountDetails.id, taskId);
             await fetchTasks();
+            toast.success('🗑️ Task deleted successfully!', { id: loadingToast });
         } catch (e) {
             console.error(e);
+            toast.error('❌ Failed to delete task. Please try again.', { id: loadingToast });
+        } finally {
+            setDeletingTaskId(null);
         }
     };
 
     const handleUpdateTask = async () => {
         if (!accountDetails?.id || !editingTask) return;
 
+        const loadingToast = toast.loading('Updating task...');
         try {
             await taskService.updateTask(accountDetails.id, editingTask.id, {
                 title: editingTask.title,
@@ -201,8 +232,10 @@ const TaskList: React.FC = () => {
             });
             setEditingTask(null);
             await fetchTasks();
+            toast.success('✏️ Task updated successfully!', { id: loadingToast });
         } catch (e) {
             console.error(e);
+            toast.error('❌ Failed to update task. Please try again.', { id: loadingToast });
         }
     };
 
@@ -214,7 +247,21 @@ const TaskList: React.FC = () => {
     return (
         <div style={styles.container}>
             <div style={styles.header}>
-                <h1 style={styles.title}>My Tasks</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <h1 style={styles.title}>My Tasks</h1>
+                    {tasks.length > 0 && (
+                        <span style={{
+                            backgroundColor: '#007bff',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '0.9rem',
+                            fontWeight: 600
+                        }}>
+                            {tasks.length}
+                        </span>
+                    )}
+                </div>
                 <button
                     style={styles.button}
                     onClick={() => setIsCreating(true)}
@@ -261,14 +308,17 @@ const TaskList: React.FC = () => {
                     </div>
                 )}
 
-                {tasks.map((task) => (
+                {tasks.map((task, index) => (
                     <div
                         key={task.id}
                         style={{
                             ...styles.card,
                             transform: hoveredCard === task.id ? 'translateY(-4px)' : 'none',
                             boxShadow: hoveredCard === task.id ? '0 8px 16px rgba(0,0,0,0.1)' : '0 2px 4px rgba(0,0,0,0.05)',
-                            borderColor: hoveredCard === task.id ? '#b0d4ff' : '#e0e0e0'
+                            borderColor: hoveredCard === task.id ? '#b0d4ff' : '#e0e0e0',
+                            opacity: deletingTaskId === task.id ? 0.5 : 1,
+                            pointerEvents: deletingTaskId === task.id ? 'none' : 'auto',
+                            animation: `fadeIn 0.3s ease-in-out ${index * 0.1}s both`
                         }}
                         onMouseEnter={() => setHoveredCard(task.id)}
                         onMouseLeave={() => setHoveredCard(null)}
@@ -316,12 +366,12 @@ const TaskList: React.FC = () => {
                                                     ✏️ Edit
                                                 </div>
                                                 <div
-                                                    style={{ ...styles.dropdownItem, color: '#dc3545' }}
-                                                    onClick={() => handleDeleteTask(task.id)}
+                                                    style={{ ...styles.dropdownItem, color: '#dc3545', opacity: deletingTaskId === task.id ? 0.5 : 1 }}
+                                                    onClick={() => deletingTaskId !== task.id && handleDeleteTask(task.id)}
                                                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
                                                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                                 >
-                                                    🗑️ Delete
+                                                    {deletingTaskId === task.id ? '⏳ Deleting...' : '🗑️ Delete'}
                                                 </div>
                                             </div>
                                         )}
@@ -329,7 +379,7 @@ const TaskList: React.FC = () => {
                                 </div>
                                 <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '1.5rem' }}>{task.description}</p>
                                 <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '15px 0' }} />
-                                <CommentSection taskId={task.id} />
+                                {accountDetails?.id && <CommentSection taskId={task.id} accountId={accountDetails.id} />}
                             </>
                         )}
                     </div>

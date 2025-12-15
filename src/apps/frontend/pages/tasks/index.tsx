@@ -97,7 +97,7 @@ const TasksPage: React.FC = () => {
                         </div>
                         <p style={{ color: '#666', lineHeight: '1.6', marginBottom: '1.5rem' }}>{task.description}</p>
                         <hr style={{ border: 'none', borderTop: '1px solid #f0f0f0', margin: '15px 0' }} />
-                        <CommentSection taskId={task.id} />
+                        {accountDetails?.id && <CommentSection taskId={task.id} accountId={accountDetails.id} />}
                     </div>
                 ))}
             </div>
