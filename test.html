@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { padding: 10px; margin: 5px; cursor: pointer; }
+        #output { margin-top: 20px; border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Task Manager - Direct API Test</h1>
+    
+    <div>
+        <h3>1. Login</h3>
+        <input type="text" id="email" placeholder="Email" value="e2e@test.com">
+        <input type="password" id="password" placeholder="Password" value="test123">
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <div>
+        <h3>2. Get Tasks</h3>
+        <button onclick="getTasks()">Fetch Tasks</button>
+    </div>
+    
+    <div>
+        <h3>3. Create Task</h3>
+        <input type="text" id="title" placeholder="Title">
+        <input type="text" id="description" placeholder="Description">
+        <button onclick="createTask()">Create</button>
+    </div>
+    
+    <div id="output"></div>
+    
+    <script>
+        let token = '';
+        let accountId = '';
+        
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/access-tokens', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: email, password: password })
+                });
+                
+                const data = await response.json();
+                token = data.token;
+                accountId = data.account_id;
+                
+                document.getElementById('output').innerHTML = `
+                    <strong>✅ Login Success!</strong><br>
+                    Account ID: ${accountId}<br>
+                    Token: ${token.substring(0, 20)}...
+                `;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `❌ Error: ${error}`;
+            }
+        }
+        
+        async function getTasks() {
+            if (!token) {
+                alert('Please login first!');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/accounts/${accountId}/tasks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const tasks = await response.json();
+                
+                let html = `<strong>✅ Found ${tasks.length} tasks:</strong><br><br>`;
+                tasks.forEach(task => {
+                    html += `<div style="border: 1px solid #ddd; padding: 10px; margin: 5px;">
+                        <strong>${task.title}</strong><br>
+                        ${task.description}<br>
+                        <small>ID: ${task.id}</small>
+                    </div>`;
+                });
+                
+                document.getElementById('output').innerHTML = html;
+            } catch (error) {
+                document.getElementById('output').innerHTML = `❌ Error: ${error}`;
+            }
+        }
+        
+        async function createTask() {
+            if (!token) {
+                alert('Please login first!');
+                return;
+            }
+            
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/accounts/${accountId}/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, description })
+                });
+                
+                const task = await response.json();
+                
+                document.getElementById('output').innerHTML = `
+                    <strong>✅ Task Created!</strong><br>
+                    Title: ${task.title}<br>
+                    Description: ${task.description}<br>
+                    ID: ${task.id}
+                `;
+                
+                // Clear inputs
+                document.getElementById('title').value = '';
+                document.getElementById('description').value = '';
+            } catch (error) {
+                document.getElementById('output').innerHTML = `❌ Error: ${error}`;
+            }
+        }
+    </script>
+</body>
+</html>

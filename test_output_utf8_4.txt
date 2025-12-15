@@ -1,0 +1,60 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\saisagar\Downloads\flask-react-assessment-saisagardunna-main\flask-react-assessment-saisagardunna-main\tests
+configfile: pyproject.toml
+plugins: cov-7.0.0
+collected 5 items
+
+tests\modules\task\test_comment_api.py ..FF.                             [100%]
+
+================================== FAILURES ===================================
+________________ TestCommentApi.test_delete_comment_not_found _________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_delete_comment_not_found>
+
+    def test_delete_comment_not_found(self):
+        account, token = self.create_account_and_get_token()
+        task = self.create_test_task(account_id=account.id)
+        fake_id = "507f1f77bcf86cd799439011"
+        url = f"http://127.0.0.1:8080/api/accounts/{account.id}/tasks/{task.id}/comments/{fake_id}"
+    
+        with app.test_client() as client:
+            headers = {**self.HEADERS, "Authorization": f"Bearer {token}"}
+            response = client.delete(url, headers=headers)
+>           assert response.status_code == 200 # Delete is idempotent/returns 204 or usually if not found, 404?
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert 204 == 200
+E            +  where 204 = <WrapperTestResponse streamed [204 NO CONTENT]>.status_code
+
+tests\modules\task\test_comment_api.py:99: AssertionError
+______________________ TestCommentApi.test_get_comments _______________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_get_comments>
+
+    def test_get_comments(self):
+        account, token = self.create_account_and_get_token()
+        task = self.create_test_task(account_id=account.id)
+        url = f"http://127.0.0.1:8080/api/accounts/{account.id}/tasks/{task.id}/comments"
+    
+        with app.test_client() as client:
+            headers = {**self.HEADERS, "Authorization": f"Bearer {token}"}
+            client.post(url, headers=headers, data=json.dumps({"content": "Comment 1"}))
+            client.post(url, headers=headers, data=json.dumps({"content": "Comment 2"}))
+    
+            response = client.get(url, headers=headers)
+    
+            assert response.status_code == 200
+            assert len(response.json) == 2
+>           assert response.json[0]["content"] == "Comment 2"
+E           AssertionError: assert 'Comment 1' == 'Comment 2'
+E             
+E             - Comment 2
+E             ?         ^
+E             + Comment 1
+E             ?         ^
+
+tests\modules\task\test_comment_api.py:52: AssertionError
+=========================== short test summary info ===========================
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_delete_comment_not_found
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_get_comments
+=================== 2 failed, 3 passed in 63.47s (0:01:03) ====================

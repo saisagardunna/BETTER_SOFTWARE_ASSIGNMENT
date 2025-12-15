@@ -1,0 +1,1006 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\saisagar\Downloads\flask-react-assessment-saisagardunna-main\flask-react-assessment-saisagardunna-main\tests
+configfile: pyproject.toml
+plugins: cov-7.0.0
+collected 5 items
+
+tests\modules\task\test_comment_api.py FEFEFEFEFE                        [100%]
+
+=================================== ERRORS ====================================
+___________ ERROR at teardown of TestCommentApi.test_create_comment ___________
+tests\modules\task\base_test_task.py:33: in tearDown
+    TaskRepository.collection().delete_many({})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\task\internal\store\task_repository.py:29: in on_init_collection
+    collection.create_index(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+---------------------------- Captured stderr call -----------------------------
+2025-12-14 13:41:42,400 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,400 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,405 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,405 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,455 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,455 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,494 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,494 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+------------------------------ Captured log call ------------------------------
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+___________ ERROR at teardown of TestCommentApi.test_delete_comment ___________
+tests\modules\task\base_test_task.py:33: in tearDown
+    TaskRepository.collection().delete_many({})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\task\internal\store\task_repository.py:29: in on_init_collection
+    collection.create_index(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+______ ERROR at teardown of TestCommentApi.test_delete_comment_not_found ______
+tests\modules\task\base_test_task.py:33: in tearDown
+    TaskRepository.collection().delete_many({})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\task\internal\store\task_repository.py:29: in on_init_collection
+    collection.create_index(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+____________ ERROR at teardown of TestCommentApi.test_get_comments ____________
+tests\modules\task\base_test_task.py:33: in tearDown
+    TaskRepository.collection().delete_many({})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\task\internal\store\task_repository.py:29: in on_init_collection
+    collection.create_index(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+___________ ERROR at teardown of TestCommentApi.test_update_comment ___________
+tests\modules\task\base_test_task.py:33: in tearDown
+    TaskRepository.collection().delete_many({})
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\task\internal\store\task_repository.py:29: in on_init_collection
+    collection.create_index(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+================================== FAILURES ===================================
+_____________________ TestCommentApi.test_create_comment ______________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_create_comment>
+
+    def test_create_comment(self):
+>       account, token = self.create_account_and_get_token()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\task\test_comment_api.py:8: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\modules\task\base_test_task.py:74: in create_account_and_get_token
+    account = self.create_test_account(username=test_username, password=test_password)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\modules\task\base_test_task.py:50: in create_test_account
+    return AccountService.create_account_by_username_and_password(
+src\apps\backend\modules\account\account_service.py:26: in create_account_by_username_and_password
+    account = AccountWriter.create_account_by_username_and_password(params=params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\account\internal\account_writer.py:30: in create_account_by_username_and_password
+    AccountReader.check_username_not_exist(params=params)
+src\apps\backend\modules\account\internal\account_reader.py:52: in check_username_not_exist
+    account_bson = AccountRepository.collection().find_one({"active": True, "username": params.username})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\account\internal\store\account_repository.py:36: in on_init_collection
+    collection.create_index("username")
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+---------------------------- Captured stderr call -----------------------------
+2025-12-14 13:41:42,400 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,400 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,405 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,405 - modules.logger.internal.console_logger - INFO - connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,455 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,455 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,494 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+2025-12-14 13:41:42,494 - modules.logger.internal.console_logger - INFO - connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+------------------------------ Captured log call ------------------------------
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connecting to database - mongodb://localhost:27017/frm-boilerplate-dev
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+INFO     modules.logger.internal.console_logger:console_logger.py:28 connected to database - mongodb://localhost:27017/frm-boilerplate-dev
+_____________________ TestCommentApi.test_delete_comment ______________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_delete_comment>
+
+    def test_delete_comment(self):
+>       account, token = self.create_account_and_get_token()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\task\test_comment_api.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\modules\task\base_test_task.py:74: in create_account_and_get_token
+    account = self.create_test_account(username=test_username, password=test_password)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\modules\task\base_test_task.py:50: in create_test_account
+    return AccountService.create_account_by_username_and_password(
+src\apps\backend\modules\account\account_service.py:26: in create_account_by_username_and_password
+    account = AccountWriter.create_account_by_username_and_password(params=params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\account\internal\account_writer.py:30: in create_account_by_username_and_password
+    AccountReader.check_username_not_exist(params=params)
+src\apps\backend\modules\account\internal\account_reader.py:52: in check_username_not_exist
+    account_bson = AccountRepository.collection().find_one({"active": True, "username": params.username})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\account\internal\store\account_repository.py:36: in on_init_collection
+    collection.create_index("username")
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+________________ TestCommentApi.test_delete_comment_not_found _________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_delete_comment_not_found>
+
+    def test_delete_comment_not_found(self):
+>       account, token = self.create_account_and_get_token()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\task\test_comment_api.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\modules\task\base_test_task.py:74: in create_account_and_get_token
+    account = self.create_test_account(username=test_username, password=test_password)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\modules\task\base_test_task.py:50: in create_test_account
+    return AccountService.create_account_by_username_and_password(
+src\apps\backend\modules\account\account_service.py:26: in create_account_by_username_and_password
+    account = AccountWriter.create_account_by_username_and_password(params=params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\account\internal\account_writer.py:30: in create_account_by_username_and_password
+    AccountReader.check_username_not_exist(params=params)
+src\apps\backend\modules\account\internal\account_reader.py:52: in check_username_not_exist
+    account_bson = AccountRepository.collection().find_one({"active": True, "username": params.username})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\account\internal\store\account_repository.py:36: in on_init_collection
+    collection.create_index("username")
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+______________________ TestCommentApi.test_get_comments _______________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_get_comments>
+
+    def test_get_comments(self):
+>       account, token = self.create_account_and_get_token()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\task\test_comment_api.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\modules\task\base_test_task.py:74: in create_account_and_get_token
+    account = self.create_test_account(username=test_username, password=test_password)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\modules\task\base_test_task.py:50: in create_test_account
+    return AccountService.create_account_by_username_and_password(
+src\apps\backend\modules\account\account_service.py:26: in create_account_by_username_and_password
+    account = AccountWriter.create_account_by_username_and_password(params=params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\account\internal\account_writer.py:30: in create_account_by_username_and_password
+    AccountReader.check_username_not_exist(params=params)
+src\apps\backend\modules\account\internal\account_reader.py:52: in check_username_not_exist
+    account_bson = AccountRepository.collection().find_one({"active": True, "username": params.username})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\account\internal\store\account_repository.py:36: in on_init_collection
+    collection.create_index("username")
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+_____________________ TestCommentApi.test_update_comment ______________________
+
+self = <tests.modules.task.test_comment_api.TestCommentApi testMethod=test_update_comment>
+
+    def test_update_comment(self):
+>       account, token = self.create_account_and_get_token()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\modules\task\test_comment_api.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\modules\task\base_test_task.py:74: in create_account_and_get_token
+    account = self.create_test_account(username=test_username, password=test_password)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\modules\task\base_test_task.py:50: in create_test_account
+    return AccountService.create_account_by_username_and_password(
+src\apps\backend\modules\account\account_service.py:26: in create_account_by_username_and_password
+    account = AccountWriter.create_account_by_username_and_password(params=params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\account\internal\account_writer.py:30: in create_account_by_username_and_password
+    AccountReader.check_username_not_exist(params=params)
+src\apps\backend\modules\account\internal\account_reader.py:52: in check_username_not_exist
+    account_bson = AccountRepository.collection().find_one({"active": True, "username": params.username})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\modules\application\repository.py:55: in collection
+    cls.on_init_collection(collection)
+src\apps\backend\modules\account\internal\store\account_repository.py:36: in on_init_collection
+    collection.create_index("username")
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2387: in create_index
+    return (self._create_indexes([index], session, **cmd_options))[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\_csot.py:125: in csot_wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:2240: in _create_indexes
+    with self._conn_for_writes(session, operation=_Op.CREATE_INDEXES) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py:578: in _conn_for_writes
+    return self._database.client._conn_for_writes(session, operation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1850: in _conn_for_writes
+    server = self._select_server(writable_server_selector, session, operation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py:1833: in _select_server
+    server = topology.select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:409: in select_server
+    server = self._select_server(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:387: in _select_server
+    servers = self.select_servers(
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:294: in select_servers
+    server_descriptions = self._select_servers_loop(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Topology <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('lo...target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>>
+selector = <function writable_server_selector at 0x00000225107AF240>
+timeout = 30, operation = <_Op.CREATE_INDEXES: 'createIndexes'>
+operation_id = None, address = None
+
+    def _select_servers_loop(
+        self,
+        selector: Callable[[Selection], Selection],
+        timeout: float,
+        operation: str,
+        operation_id: Optional[int],
+        address: Optional[_Address],
+    ) -> list[ServerDescription]:
+        """select_servers() guts. Hold the lock when calling this."""
+        now = time.monotonic()
+        end_time = now + timeout
+        logged_waiting = False
+    
+        if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+            _debug_log(
+                _SERVER_SELECTION_LOGGER,
+                message=_ServerSelectionStatusMessage.STARTED,
+                selector=selector,
+                operation=operation,
+                operationId=operation_id,
+                topologyDescription=self.description,
+                clientId=self.description._topology_settings._topology_id,
+            )
+    
+        server_descriptions = self._description.apply_selector(
+            selector, address, custom_selector=self._settings.server_selector
+        )
+    
+        while not server_descriptions:
+            # No suitable servers.
+            if timeout == 0 or now > end_time:
+                if _SERVER_SELECTION_LOGGER.isEnabledFor(logging.DEBUG):
+                    _debug_log(
+                        _SERVER_SELECTION_LOGGER,
+                        message=_ServerSelectionStatusMessage.FAILED,
+                        selector=selector,
+                        operation=operation,
+                        operationId=operation_id,
+                        topologyDescription=self.description,
+                        clientId=self.description._topology_settings._topology_id,
+                        failure=self._error_message(selector),
+                    )
+>               raise ServerSelectionTimeoutError(
+                    f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+                )
+E               pymongo.errors.ServerSelectionTimeoutError: localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 693e713eae569d4882ccd260, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] No connection could be made because the target machine actively refused it (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+src\apps\backend\venv\Lib\site-packages\pymongo\synchronous\topology.py:344: ServerSelectionTimeoutError
+=========================== short test summary info ===========================
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_create_comment
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_delete_comment
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_delete_comment_not_found
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_get_comments
+FAILED tests\modules\task\test_comment_api.py::TestCommentApi::test_update_comment
+ERROR tests\modules\task\test_comment_api.py::TestCommentApi::test_create_comment
+ERROR tests\modules\task\test_comment_api.py::TestCommentApi::test_delete_comment
+ERROR tests\modules\task\test_comment_api.py::TestCommentApi::test_delete_comment_not_found
+ERROR tests\modules\task\test_comment_api.py::TestCommentApi::test_get_comments
+ERROR tests\modules\task\test_comment_api.py::TestCommentApi::test_update_comment
+=================== 5 failed, 5 errors in 362.32s (0:06:02) ===================

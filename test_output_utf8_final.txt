@@ -1,0 +1,10 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\saisagar\Downloads\flask-react-assessment-saisagardunna-main\flask-react-assessment-saisagardunna-main\tests
+configfile: pyproject.toml
+plugins: cov-7.0.0
+collected 5 items
+
+tests\modules\task\test_comment_api.py .....                             [100%]
+
+======================== 5 passed in 61.18s (0:01:01) =========================
